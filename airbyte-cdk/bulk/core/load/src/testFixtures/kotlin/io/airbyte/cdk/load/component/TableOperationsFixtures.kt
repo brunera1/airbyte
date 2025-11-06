@@ -37,6 +37,7 @@ object TableOperationsFixtures {
 
     // Common schemas
     val TEST_INTEGER_SCHEMA = ObjectType(linkedMapOf(TEST_FIELD to FieldType(IntegerType, true)))
+    val TEST_STRING_SCHEMA = ObjectType(linkedMapOf(TEST_FIELD to FieldType(StringType, true)))
 
     val ID_AND_TEST_SCHEMA =
         ObjectType(
@@ -57,6 +58,8 @@ object TableOperationsFixtures {
 
     // Common column mappings
     val TEST_MAPPING = ColumnNameMapping(mapOf(TEST_FIELD to TEST_FIELD))
+    val ID_AND_TEST_MAPPING =
+        ColumnNameMapping(mapOf(TEST_FIELD to TEST_FIELD, ID_FIELD to ID_FIELD))
 
     val ID_TEST_WITH_CDC_MAPPING =
         ColumnNameMapping(
@@ -276,11 +279,21 @@ object TableOperationsFixtures {
         prefix: String,
         namespace: String,
     ): TableName {
-        return TableName(namespace, "$prefix-${UUID.randomUUID()}")
+        return TableName(
+            namespace,
+            "$prefix-${UUID.randomUUID()}"
+            // this is a hack for now - eventually we probably want to plumb in a
+            // TableNameGenerator,
+            // but until then - underscores are generally nicer than hyphens.
+            .replace('-', '_'),
+        )
     }
 
     fun generateTestNamespace(prefix: String): String {
         return "$prefix-${UUID.randomUUID()}"
+        // this is a hack for now - eventually we probably want to plumb in a TableNameGenerator,
+        // but until then - underscores are generally nicer than hyphens.
+        .replace('-', '_')
     }
 
     // Create common destination stream configurations
